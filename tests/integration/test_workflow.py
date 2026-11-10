@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
+from langchain_core.messages import AIMessage
 
 from relay.graph.workflow import compile_workflow
 
@@ -53,6 +54,22 @@ def test_unsupported_question_refines_once_then_refuses_without_model_call():
     assert len(state["tool_calls"]) == 2
 
 
+def test_weak_first_retrieval_refines_once_and_can_recover():
+    def evidence_changes(_query):
+        return [] if len(retrieval.calls) == 1 else [PASSAGE]
+
+    fake_model = FakeListChatModel(responses=[
+        response([{"text": "The Transformer uses self-attention.", "citation_ids": ["c1"]}]),
+        json.dumps({"supported": True, "issues": ""}),
+    ])
+    retrieval = FakeRetrieval(evidence_changes)
+    graph = compile_workflow(retrieval, fake_model, {"1706.03762": 15})
+    state = graph.invoke({"request_id": "test", "user_query": "What does Transformer use for attention?"})
+    assert state["final_status"] == "ok"
+    assert len(retrieval.calls) == 2
+    assert retrieval.calls[0] != retrieval.calls[1]
+
+
 def test_failed_verification_allows_one_revision_then_rechecks():
     fake_model = FakeListChatModel(responses=[
         response([{"text": "Possibly unsupported initial claim.", "citation_ids": ["c1"]}]),
@@ -65,3 +82,47 @@ def test_failed_verification_allows_one_revision_then_rechecks():
     assert state["final_status"] == "ok"
     assert state["revision_attempts"] == 1
     assert len(state["call_usage"]) == 4
+
+
+def test_unavailable_verifier_stops_without_releasing_or_revision():
+    class FailsOnVerification:
+        def __init__(self):
+            self.calls = 0
+
+        def invoke(self, _messages):
+            self.calls += 1
+            if self.calls == 2:
+                raise RuntimeError("429 RateLimitError retry after 8s org_abcdef")
+            return AIMessage(content=response([{"text": "A supported claim.", "citation_ids": ["c1"]}]))
+
+    fake_model = FailsOnVerification()
+    graph = compile_workflow(FakeRetrieval([PASSAGE]), fake_model, {"1706.03762": 15})
+    state = graph.invoke({"request_id": "test", "user_query": "What does the Transformer use for attention?"})
+    assert state["final_status"] == "error"
+    assert "temporarily unavailable" in state["final_response"]
+    assert state["revision_attempts"] == 0
+    assert "org_abcdef" not in state["failure_detail"]
+
+
+def test_unavailable_revision_is_an_error_and_records_unknown_usage():
+    class FailsOnRevision:
+        def __init__(self):
+            self.calls = 0
+
+        def invoke(self, _messages):
+            self.calls += 1
+            if self.calls == 3:
+                raise RuntimeError("429 rate limited")
+            content = (response([{"text": "An initial claim.", "citation_ids": ["c1"]}])
+                       if self.calls == 1 else json.dumps({"supported": False, "issues": "Correct claim."}))
+            return AIMessage(content=content)
+
+    fake_model = FailsOnRevision()
+    graph = compile_workflow(FakeRetrieval([PASSAGE]), fake_model, {"1706.03762": 15})
+    state = graph.invoke({"request_id": "test", "user_query": "What does the Transformer use for attention?"})
+    assert state["final_status"] == "error"
+    assert state["failure_stage"] == "revision"
+    assert state["revision_attempts"] == 1
+    assert state["call_usage"][-1]["outcome"] == "error"
+    assert state["call_usage"][-1]["input_tokens"] is None
+    assert fake_model.calls == 3

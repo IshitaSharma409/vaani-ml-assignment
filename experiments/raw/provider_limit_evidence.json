@@ -11,9 +11,9 @@
     "input_tokens_per_minute": null,
     "output_tokens_per_minute": null,
     "requests_in_flight": null,
-    "recovery_time": "not measured; no 429 response was encountered"
+    "recovery_time": "One TPM 429 advised retrying after 8.1975 seconds; a later request succeeded after a longer cooldown, so the exact recovery boundary was not measured."
   },
-  "account_evidence_status": "model access verified; RPD and TPM confirmed by response headers; RPM/TPD and concurrency not independently confirmed in account settings",
+  "account_evidence_status": "model access verified; RPD and TPM confirmed by successful response headers; a separate Phase 2 TPM 429 observed; RPM/TPD and concurrency not independently confirmed in account settings",
   "official_documentation": {
     "source_url": "https://console.groq.com/docs/rate-limits",
     "documented_limit_dimensions": [
@@ -32,8 +32,9 @@
   },
   "evidence_notes": [
     "No published example value has been treated as this account's limit.",
-    "No 429 response, reset time, concurrency limit, or recovery behavior has been observed.",
-    "Revisit this record after the user configures their own Groq model and key locally."
+    "Revisit this record after the user configures their own Groq model and key locally.",
+    "A real Phase 2 request later triggered one TPM 429. The provider error body reported an 8.1975 second retry delay. A subsequent real run succeeded after a longer cooldown; do not interpret this as a precise recovery measurement.",
+    "The initial three-call baseline had no 429; a separate Phase 2 revision call later did. The response supplied an 8.1975-second wait recommendation; actual exact recovery time was not measured."
   ],
   "model_access": {
     "verified": true,
@@ -105,6 +106,22 @@
     "tokens_per_day": 200000,
     "confidence": "medium for this account; official documentation labels its table a high-level summary and directs users to the account Limits page for exact values"
   },
-  "observed_rate_limit_event": "none; all three provider completion requests succeeded",
-  "last_updated_at_utc": "2026-11-10T09:14:33Z"
+  "observed_rate_limit_event": "One real Groq TPM 429 was observed during Phase 2 smoke testing; subsequent controlled request succeeded after cooldown.",
+  "last_updated_at_utc": "2026-11-10T13:38:14Z",
+  "observed_rate_limit_events": [
+    {
+      "date": "2026-11-10",
+      "source": "real_groq",
+      "case_id": "dynamic_chunking",
+      "request_id": "e4bd65a0-5195-4d91-b4c5-11797e2f710c",
+      "model": "openai/gpt-oss-120b",
+      "dimension": "tokens_per_minute",
+      "limit": 8000,
+      "used_reported_by_provider": 7179,
+      "requested_reported_by_provider": 1914,
+      "response": "HTTP 429 RateLimitError; provider error message advised retry after 8.1975 seconds",
+      "recovery": "A later request succeeded after a longer cooldown; exact boundary not measured",
+      "organization_identifier": "redacted from logs"
+    }
+  ]
 }

@@ -3,16 +3,32 @@ environment: local
 
 llm:
   provider: groq
+  backend_env_var: RELAY_BACKEND
   model_env_var: GROQ_MODEL
   api_key_env_var: GROQ_API_KEY
   temperature: 0
   timeout_seconds: 30
   max_retries: 0 # Application code will own and count retries explicitly.
+  max_output_tokens: 512
 
 request:
   deadline_seconds: 60
   queue_capacity: 8 # Initial value; tune only after measured baseline and queue tests.
+  workers: 4
   max_concurrent_model_calls: 2
+
+local_budgets:
+  enabled_for_groq: true
+  requests_per_minute: 20
+  tokens_per_minute: 7000
+  requests_per_day: 900
+  tokens_per_day: 180000
+  daily_state_path: experiments/raw/local_budget_state.json
+  token_estimator: characters_div_4_v1
+  retry_max_attempts: 2
+  retry_base_seconds: 0.5
+  retry_max_seconds: 8
+  retry_jitter_seed: 29
 
 logging:
   level: INFO

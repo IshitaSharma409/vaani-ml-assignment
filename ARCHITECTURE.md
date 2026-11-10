@@ -2,7 +2,7 @@
 
 ## Status and alignment
 
-This is the architecture proposed in `IMPLEMENTATION_PLAN.md`, checked against the authoritative assignment brief. It is a target architecture; Phase 1 project setup and corpus acquisition have started, but no assistant pipeline exists yet. The diagrams and component choices below do not add an alternate architecture.
+This follows the architecture proposed in `IMPLEMENTATION_PLAN.md`, checked against the authoritative assignment brief. Phases 1–4 are implemented: corpus/RAG workflow, Groq and local backends, admission/reliability controls, observability, the stand-in, retrieval evaluation, and load measurements. Phase 5 reporting remains. The selected default retrieval setting is `medium_reranked`, based on Phase 4 exact page/version hit@3 (12/15); explicit settings remain available for evaluation and near-limit operation. The diagrams and component choices below do not add an alternate architecture.
 
 ## Design goals
 
@@ -18,14 +18,14 @@ This is the architecture proposed in `IMPLEMENTATION_PLAN.md`, checked against t
 |---|---|---|
 | Configuration and secrets | Validate non-secret settings; load `GROQ_API_KEY` and `GROQ_MODEL` from environment; separate model, retrieval, queue, retry, and scenario configuration. | `config/`; `src/relay/config.py`; `.env.example` |
 | API and schemas | Accept/validate question requests; present outcomes and typed request/response/metric fields. | `src/relay/api.py`, `schemas.py` |
-| Admission/reliability | Bounded FIFO queue, concurrency and local RPM/TPM/day budgets, deadlines, cancellation and explicit bounded retry/backoff. | `src/relay/reliability/` |
+| Admission/reliability | Bounded FIFO queue, model-call semaphore, persistent local RPM/TPM/day budgets for Groq, end-to-end deadlines, client-abandonment tracking, and explicit bounded retry/backoff. | `src/relay/reliability/` |
 | Paper ingestion | Load only required PDFs page-by-page; preserve paper ID/title/version/page; clean extraction conservatively and create a manifest. | `scripts/download_papers.py`; `src/relay/retrieval/ingest.py` |
 | Chunking/index | Page-preserving chunks with stable IDs; local embeddings and persistent, rebuildable Chroma index with configuration manifest. | `src/relay/retrieval/chunking.py`, `index.py`; `data/` |
-| Retrieval tool and citations | Explicit LangChain retrieval tool; bounded top-k and optional local reranker; deterministic citation-to-chunk/page validation. | `src/relay/retrieval/tools.py`, `citations.py` |
+| Retrieval tool and citations | Explicit LangChain retrieval tool; bounded top-k and optional local reranker (currently BM25); deterministic citation-to-chunk/page validation. | `src/relay/retrieval/tools.py`, `citations.py` |
 | Backend abstraction | Common interface for genuine `ChatGroq` inference and local simulator adapter; no secrets in traces; model/time/token metadata where available. | `src/relay/llm/` |
 | LangGraph workflow | Typed shared state, focused nodes, explicit conditional edges, bounded refinement/revision and safe terminal outcomes. LangChain composes prompts, models, retriever, and tools. | `src/relay/graph/` |
 | Stand-in service | Local FastAPI-compatible chat endpoint and streaming simulator; configurable delay, chunk pacing, failure, synthetic quotas, and load slowdown. | `src/relay/standin/` |
-| Observability/results | UTC event times plus monotonic durations; request/stage traces, first token, retries, queue, usage provenance; one end-user row in required CSV. | `src/relay/observability/`; `experiments/raw/` |
+| Observability/results | UTC event times plus monotonic durations; request/stage traces, separate first-model and first-user response times, retries, queue, token provenance, structured logs; one end-user row in required CSV plus detailed JSONL. | `src/relay/observability/`; `experiments/raw/` |
 | Evaluation/report | Paper-grounded questions and manual rubric; retrieval and load runners; deterministic metrics and figures/tables. | `src/relay/evaluation/`; `scripts/`; `experiments/`; `submissions/` |
 
 ## Request lifecycle
@@ -48,6 +48,7 @@ flowchart TD
     V -->|Fail; one revision available| D[Revise once from supplied evidence]
     D --> V
     V -->|Fail; exhausted| X
+    V -->|Provider unavailable| F[Operational error; no draft release]
     O --> T[Record request outcome and metrics]
     G --> T
     X --> T
@@ -68,6 +69,15 @@ flowchart LR
 ```
 
 Only backend selection and run profile vary. Retrieval, prompt/evidence rules, citation validation, workflow, and result schema remain common. The stand-in models observed external behavior; it does not claim to reproduce Groq's internal serving system. Simulation results must never be reported as real-provider measurements.
+
+## Phase 3 configuration and current evidence
+
+- `config/app.yaml` sets initial worker, queue, deadline, model-call concurrency, local Groq safety budgets, token estimator, and bounded retry settings. The persisted local daily counter cannot account for activity outside this application.
+- `config/standin_profile.yaml` preserves three raw Groq latency samples and sample IDs. Inter-chunk pacing, load slowdown, quotas, failure controls, and deterministic response content are explicitly synthetic.
+- `config/scenarios.yaml` defines the five planned load scenario names and initial parameters, fixed before the run and executed by the Phase 4 runner; run records and metrics are preserved under `experiments/raw/` and `experiments/summaries/`.
+- `RELAY_BACKEND=groq|standin` selects a backend. The same compiled workflow is used in either case; the stand-in adapter targets loopback port 8001.
+- Admission rejects a full queue with a 503 outcome, writes one result row for accepted/rejected requests, and tracks abandonment/deadline outcomes separately from the compact required status values.
+- The CSV preserves the exact mandatory 12 columns and appends audit fields. `first_token_ms` means first user-visible response time; `first_model_token_ms` separately records the model stream, which is important because validated answers are buffered.
 
 ## Workflow nodes and state
 
@@ -115,11 +125,11 @@ relay/
 └── submissions/assistant_worklog.md
 ```
 
-The plan does not define a documentation folder. The three requested analysis files were therefore placed at the project root. Phase 1 has created only plan-designated project folders and files.
+The plan does not define a documentation folder. The three requested analysis files were therefore placed at the project root. Implemented files use the plan-designated folders. The locally generated Chroma index is stored below the planned `data/vectorstore/` path and is rebuildable.
 
 ## Proposed supporting technologies and external requirements
 
-Python 3.11+ and compatible, pinned LangChain, LangGraph, and `langchain-groq` packages are required by the implementation instructions. The plan proposes FastAPI/Uvicorn, `httpx`, `pypdf` or tested equivalent, local Chroma, local sentence-transformer embeddings, optional local cross-encoder reranking, `asyncio`, pytest, and CSV/JSONL/YAML/Markdown. Versions were compatibility-checked on Python 3.12.14. The configured Groq model is accessible; successful headers confirmed RPD and TPM. RPM/TPD remain dated documentation references, while account concurrency and recovery remain unmeasured. The assignment also requires visiting Vaani in the reporting phase and retaining genuine assistant conversation material.
+Python 3.11+ and compatible, pinned LangChain, LangGraph, and `langchain-groq` packages are required by the implementation instructions. The project uses LangChain text splitters, local Chroma, pinned sentence-transformer embeddings, local BM25 reranking, FastAPI/Uvicorn and reliability controls. Versions were compatibility-checked on Python 3.12.14. Groq RPD and TPM headers and one TPM 429 have been recorded; RPM/TPD remain documentation references and exact recovery/concurrency remain unmeasured. Phase 4 retrieval and load evidence are preserved in raw files and derived summaries; Phase 5 reporting remains. The assignment also requires visiting Vaani in the reporting phase and retaining genuine assistant conversation material.
 
 ## Risks and design controls
 
@@ -136,4 +146,4 @@ Python 3.11+ and compatible, pinned LangChain, LangGraph, and `langchain-groq` p
 
 ## Analysis findings and open items
 
-No substantive plan conflict with the assignment was identified. The plan's five load rows satisfy and extend the assignment's three example shapes; additive CSV fields retain the mandatory schema and enable recomputation. The model is verified as accessible, and a three-call real baseline plus response-header evidence are preserved. Some account-specific limits, daily recovery, and concurrency remain unmeasured. The assignment receipt date is still required to calculate the deadline. Phase 2 has not started and awaits review/explicit approval.
+No substantive plan conflict with the assignment was identified. The plan's five load rows satisfy and extend the assignment's three example shapes; additive CSV fields retain the mandatory schema and enable recomputation. Phase 2 includes a real three-paper answer sample and a tested safe-refusal path. Phase 3 reliability and stand-in implementation is complete and locally verified; its five load configurations remain unrun for Phase 4. Account RPM/TPD, exact recovery, and concurrency remain unmeasured. The assignment receipt date is still required to calculate the deadline.

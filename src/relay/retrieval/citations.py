@@ -9,6 +9,9 @@ class CitationError(ValueError):
     """Raised when an answer references anything outside retrieved evidence."""
 
 
+EXPECTED_VERSIONS = {"1706.03762": "7", "2410.00037": "1", "2507.07955": "2"}
+
+
 def validate_citation_ids(citation_ids: list[str], passages: list[dict[str, Any]], page_counts: dict[str, int]) -> list[dict[str, Any]]:
     """Resolve citation IDs only against retrieved chunks and verified PDF bounds."""
     available = {str(item["chunk_id"]): item for item in passages}
@@ -20,6 +23,8 @@ def validate_citation_ids(citation_ids: list[str], passages: list[dict[str, Any]
         if passage is None:
             raise CitationError(f"Citation does not identify a retrieved chunk: {citation_id}")
         paper_id = str(passage["paper_id"])
+        if paper_id not in EXPECTED_VERSIONS or str(passage.get("arxiv_version")) != EXPECTED_VERSIONS[paper_id]:
+            raise CitationError(f"Citation has an unknown or wrong paper version: {citation_id}")
         page = passage.get("pdf_page_number")
         if not isinstance(page, int) or page < 1 or page > page_counts.get(paper_id, 0):
             raise CitationError(f"Invalid PDF page for citation {citation_id}")

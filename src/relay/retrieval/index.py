@@ -7,6 +7,7 @@ import json
 import math
 import re
 import shutil
+import threading
 import time
 from collections import Counter
 from pathlib import Path
@@ -103,9 +104,17 @@ class RetrievalService:
             raise ValueError("Retrieval config differs from index manifest; rebuild the index")
         self.embeddings = make_embeddings(self.config)
         self._stores: dict[str, Chroma] = {}
+        self._search_lock = threading.RLock()
 
     def search(self, query: str, setting: str | None = None, top_k: int | None = None) -> tuple[list[dict[str, Any]], dict[str, float]]:
         """Return metadata-rich passages and separately measured retrieval timings."""
+        # Chroma's embedded Rust client is not safe for concurrent collection/query
+        # initialization in this Windows environment; serialize only the local search.
+        with self._search_lock:
+            return self._search_unlocked(query, setting, top_k)
+
+    def _search_unlocked(self, query: str, setting: str | None = None,
+                         top_k: int | None = None) -> tuple[list[dict[str, Any]], dict[str, float]]:
         setting = setting or self.config["default_setting"]
         if setting not in self.config["settings"]:
             raise ValueError(f"Unknown retrieval setting: {setting}")
@@ -120,22 +129,27 @@ class RetrievalService:
             )
             self._stores[setting] = store
         start = time.perf_counter()
-        results = store.similarity_search_with_relevance_scores(query, k=requested_k)
+        distance_results = store.similarity_search_with_score(query, k=requested_k)
+        # Normalize Chroma's nonnegative distance to a documented [0, 1] monotonic score.
+        results = [(doc, 1.0 / (1.0 + max(float(distance), 0.0)), None) for doc, distance in distance_results]
         vector_seconds = time.perf_counter() - start
         rerank_seconds = 0.0
         if options.get("rerank"):
             start = time.perf_counter()
             query_terms = set(re.findall(r"[a-z0-9]+", query.lower()))
-            lexical_scores = self._bm25_candidates(query_terms, [doc.page_content for doc, _ in results])
-            docs_scores = [(doc, score, lexical) for (doc, score), lexical in zip(results, lexical_scores)]
+            lexical_scores = self._bm25_candidates(query_terms, [doc.page_content for doc, _, _ in results])
+            docs_scores = [(doc, score, lexical) for (doc, score, _), lexical in zip(results, lexical_scores)]
             docs_scores.sort(key=lambda row: (row[2], row[1]), reverse=True)
-            results = [(doc, similarity) for doc, similarity, _ in docs_scores[: options["top_k"]]]
+            results = docs_scores[: options["top_k"]]
             rerank_seconds = time.perf_counter() - start
         else:
             results = results[: options["top_k"]]
         passages = []
-        for doc, score in results:
-            passages.append({"chunk_text": doc.page_content, "score": float(score), **doc.metadata})
+        for doc, score, rerank_score in results:
+            passages.append({"chunk_text": doc.page_content, "score": float(score),
+                             "retrieval_score": float(score),
+                             "rerank_score": float(rerank_score) if rerank_score is not None else None,
+                             **doc.metadata})
         return passages, {"vector_search_seconds": vector_seconds, "rerank_seconds": rerank_seconds}
 
     @staticmethod

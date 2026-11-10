@@ -28,6 +28,15 @@ def test_missing_or_out_of_bounds_page_is_rejected(passage):
         validate_citation_ids(["chunk-1"], [invalid], {"1706.03762": 15})
 
 
+def test_missing_page_and_wrong_version_are_rejected(passage):
+    invalid_page = {key: value for key, value in passage.items() if key != "pdf_page_number"}
+    with pytest.raises(CitationError):
+        validate_citation_ids(["chunk-1"], [invalid_page], {"1706.03762": 15})
+    wrong_version = {**passage, "arxiv_version": "6"}
+    with pytest.raises(CitationError):
+        validate_citation_ids(["chunk-1"], [wrong_version], {"1706.03762": 15})
+
+
 def test_citation_format_uses_source_metadata(passage):
     answer = render_claims([{"text": "Self-attention relates positions.", "citation_ids": ["chunk-1"]}],
                           [passage], {"1706.03762": 15})

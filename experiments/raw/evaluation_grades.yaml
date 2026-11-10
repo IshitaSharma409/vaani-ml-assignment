@@ -1,0 +1,321 @@
+schema_version: 1
+rubric_source: src/relay/evaluation/grading.py
+review_method: Direct comparison of captured answers with the cited source pages;
+  not a separate model-grader call.
+reviewer: assistant_manual_evidence_review
+grades:
+- question_id: transformer_01
+  request_id: 8a5a2b72-9010-43c9-bc0c-aeb9877422d5
+  answer_grade: correct
+  reason: Explains the variance scale and softmax small-gradient problem, and cites
+    Transformer v7 PDF page 4.
+  evidence_pages:
+  - 4
+- question_id: moshi_01
+  request_id: 083da3a2-f6ad-4ca4-9b31-8641fca3c655
+  answer_grade: refused_wrongly
+  reason: Mimi's semantic/acoustic combination is documented on Moshi v1 PDF page
+    9 and was retrieved by small_fast for this question; this medium run returned
+    a refusal.
+  evidence_pages:
+  - 9
+  - 10
+- question_id: hnet_01
+  request_id: 1615bb9e-966a-45d9-a9f2-60d00b73e5e6
+  answer_grade: wrong
+  reason: The answer omits the required cosine similarity between adjacent representations
+    and cites PDF page 2, which discusses dynamic chunking broadly rather than the
+    routing signal.
+  evidence_pages:
+  - 2
+  - 6
+- question_id: hnet_01
+  request_id: 747a2f1b-e1cb-428a-ab6b-1dc8198907b6
+  answer_grade: wrong
+  reason: The cited page describes contextual shifts but the answer omits the routing
+    module's cosine similarity between adjacent encoder outputs, required by the question.
+  evidence_pages:
+  - 6
+- question_id: transformer_01
+  request_id: 6efdc81c-dc83-4ddb-b124-bec64414a36d
+  answer_grade: correct
+  reason: Accurately explains why scale stabilizes the softmax and cites Transformer
+    PDF p. 4.
+  evidence_pages: &id001
+  - 4
+  grader: assistant_manual_evidence_review
+- question_id: transformer_01
+  request_id: 79b47085-35a1-4aaa-9561-d463f58a8d51
+  answer_grade: correct
+  reason: Accurately states the variance and small-gradient rationale; cited Transformer
+    PDF p. 4 supports it.
+  evidence_pages: *id001
+  grader: assistant_manual_evidence_review
+- question_id: transformer_01
+  request_id: fe66c79d-9f87-420d-8314-2b1e13f0b620
+  answer_grade: correct
+  reason: Accurately identifies large dot-product variance and softmax small gradients;
+    cited Transformer PDF p. 4.
+  evidence_pages: *id001
+  grader: assistant_manual_evidence_review
+- question_id: hnet_01
+  request_id: 3a023899-f2dc-41e0-ba95-1ce90fa80066
+  answer_grade: wrong
+  reason: Says only generic similarity between elements; it omits cosine similarity
+    between adjacent encoder representations, required on H-Net PDF p. 6.
+  evidence_pages:
+  - 2
+  - 6
+  grader: assistant_manual_evidence_review
+- question_id: hnet_01
+  request_id: 0f6ca831-3130-4f22-923c-9d6a25c4e39e
+  answer_grade: wrong
+  reason: Mentions contextual shifts but omits the required adjacent-representation
+    cosine signal; H-Net PDF p. 6.
+  evidence_pages: &id002
+  - 6
+  grader: assistant_manual_evidence_review
+- question_id: hnet_01
+  request_id: 250e7a07-056b-44a3-8e07-90abf29b63c0
+  answer_grade: wrong
+  reason: Mentions contextual shifts but omits the required adjacent-representation
+    cosine signal; H-Net PDF p. 6.
+  evidence_pages: *id002
+  grader: assistant_manual_evidence_review
+- question_id: transformer_02
+  request_id: c1a2a286-a67a-4057-bae5-a92f0ecc0774
+  answer_grade: correct
+  reason: Correctly reports six encoder and six decoder layers; Transformer PDF p.
+    3.
+  evidence_pages: &id003
+  - 3
+  grader: assistant_manual_evidence_review
+- question_id: transformer_02
+  request_id: cb135ec1-5ef9-4671-930b-8a3db6815845
+  answer_grade: correct
+  reason: Correctly reports six encoder and six decoder layers; Transformer PDF p.
+    3.
+  evidence_pages: *id003
+  grader: assistant_manual_evidence_review
+- question_id: transformer_02
+  request_id: ce305e0b-0d94-4b4c-870c-6024d4e79d22
+  answer_grade: correct
+  reason: Correctly reports N=6 for both stacks; duplicate citation resolves to Transformer
+    PDF p. 3.
+  evidence_pages: *id003
+  grader: assistant_manual_evidence_review
+- question_id: moshi_02
+  request_id: daafde68-0ac9-4b75-b962-a8362acbe0ef
+  answer_grade: correct
+  reason: Correctly gives 12.5 frames/s and latent dimension 512; Moshi PDF p. 10.
+  evidence_pages: &id004
+  - 10
+  grader: assistant_manual_evidence_review
+- question_id: moshi_02
+  request_id: 7f75b69b-f2b3-4f58-a04d-859c73499ac4
+  answer_grade: correct
+  reason: 80 ms corresponds to 12.5 frames/s and dimension 512; Moshi PDF p. 10.
+  evidence_pages: *id004
+  grader: assistant_manual_evidence_review
+- question_id: moshi_02
+  request_id: 83cecbeb-0cfb-46de-82b8-cee820fe2e4c
+  answer_grade: correct
+  reason: Correctly gives 12.5 frames/s and latent dimension 512; Moshi PDF p. 10.
+  evidence_pages: *id004
+  grader: assistant_manual_evidence_review
+- question_id: hnet_02
+  request_id: 9da07940-2f0a-4bf5-baae-7c748211be6e
+  answer_grade: correct
+  reason: Correctly identifies gradient instability and boundary-learning degradation
+    when smoothing is absent; H-Net PDF p. 18 supports this effect.
+  evidence_pages:
+  - 18
+  grader: assistant_manual_evidence_review
+- question_id: hnet_02
+  request_id: 7376c003-9762-444b-b0df-df7ed9667677
+  answer_grade: wrong
+  reason: Only describes generic interpolation and cites PDF p. 3 rather than the
+    smoothing/decompression evidence on H-Net PDF p. 7.
+  evidence_pages:
+  - 3
+  - 7
+  grader: assistant_manual_evidence_review
+- question_id: hnet_02
+  request_id: e0beddf0-387f-42d5-9b57-689038bf883b
+  answer_grade: wrong
+  reason: Only describes generic interpolation and cites PDF p. 3 rather than the
+    smoothing/decompression evidence on H-Net PDF p. 7.
+  evidence_pages:
+  - 3
+  - 7
+  grader: assistant_manual_evidence_review
+- question_id: transformer_03
+  request_id: 8ac65b08-cd44-44c0-b878-34ebb9a2b3c6
+  answer_grade: correct
+  reason: Describes causal masking and the one-position output shift; Transformer
+    PDF p. 3.
+  evidence_pages: &id005
+  - 3
+  - 5
+  grader: assistant_manual_evidence_review
+- question_id: transformer_03
+  request_id: a1b52d17-f86b-432f-b01d-1fd02fabcf91
+  answer_grade: refused_wrongly
+  reason: The answer is stated on Transformer PDF pp. 3 and 5; refusing misses supported
+    corpus evidence.
+  evidence_pages: *id005
+  grader: assistant_manual_evidence_review
+- question_id: transformer_03
+  request_id: 99c94674-73de-4ad1-a942-bb943d423e11
+  answer_grade: correct
+  reason: Correctly describes masked self-attention blocking future positions; Transformer
+    PDF p. 5.
+  evidence_pages: *id005
+  grader: assistant_manual_evidence_review
+- question_id: moshi_03
+  request_id: d6e88cba-2476-4c83-915d-4cfd48fcfdfd
+  answer_grade: correct
+  reason: Correctly states Q=8 and 12.5 Hz; Moshi PDF p. 12.
+  evidence_pages:
+  - 12
+  - 14
+  grader: assistant_manual_evidence_review
+- question_id: moshi_03
+  request_id: 27cab8cb-b4a0-4b72-8d56-25d1cbf1185a
+  answer_grade: wrong
+  reason: Leaves Q unspecified, so it does not answer how many codebook subsequences;
+    Moshi PDF p. 14 contains the required value.
+  evidence_pages: &id006
+  - 14
+  grader: assistant_manual_evidence_review
+- question_id: moshi_03
+  request_id: 4ccee70a-2d56-44ec-9bd1-3580dce20835
+  answer_grade: wrong
+  reason: Leaves Q unspecified, so it does not answer how many codebook subsequences;
+    Moshi PDF p. 14 contains the required value.
+  evidence_pages: *id006
+  grader: assistant_manual_evidence_review
+- question_id: hnet_03
+  request_id: 1f8470d6-4285-45b4-a6f0-bf71e5239d63
+  answer_grade: refused_wrongly
+  reason: The ratio-loss motivation and trivial compression extremes are stated on
+    H-Net PDF p. 8.
+  evidence_pages:
+  - 8
+  grader: assistant_manual_evidence_review
+- question_id: transformer_04
+  request_id: c1a20034-3cef-4b7e-b713-799c0268a69d
+  answer_grade: refused_wrongly
+  reason: Sine/cosine positional encodings and their input location are explicit on
+    Transformer PDF p. 6.
+  evidence_pages: &id007
+  - 6
+  grader: assistant_manual_evidence_review
+- question_id: transformer_04
+  request_id: d90c6657-1d28-4dda-a4f8-e564d8553d01
+  answer_grade: correct
+  reason: Gives both sine/cosine functions and addition to encoder/decoder input embeddings;
+    Transformer PDF p. 6.
+  evidence_pages: *id007
+  grader: assistant_manual_evidence_review
+- question_id: moshi_04
+  request_id: 31324036-d659-4e16-b9a8-540855b06cfd
+  answer_grade: wrong
+  reason: Does not explain the reduced same-step dependency/stability rationale and
+    adds an unsupported ASR/TTS claim; Moshi PDF p. 14.
+  evidence_pages:
+  - 3
+  - 14
+  - 26
+  grader: assistant_manual_evidence_review
+- question_id: moshi_04
+  request_id: 1dfc8120-89db-4a03-a045-7f1b2388587c
+  answer_grade: wrong
+  reason: Misstates the two-step delay as seconds and does not give the paper’s dependency/stability
+    rationale; Moshi PDF p. 14.
+  evidence_pages:
+  - 14
+  - 26
+  - 57
+  grader: assistant_manual_evidence_review
+- question_id: hnet_04
+  request_id: 1a9cf07d-8602-4796-ab39-eb46e6c5cc1e
+  answer_grade: correct
+  reason: Correctly describes per-token router selection of the main network and variable
+    compute; H-Net PDF p. 10.
+  evidence_pages: &id008
+  - 10
+  grader: assistant_manual_evidence_review
+- question_id: hnet_04
+  request_id: 1deec3cc-3502-4bec-968e-55329a776b92
+  answer_grade: correct
+  reason: Correctly describes per-token router selection of the main network and variable
+    compute; H-Net PDF p. 10.
+  evidence_pages: *id008
+  grader: assistant_manual_evidence_review
+- question_id: hnet_04
+  request_id: 96ff9d42-8531-4877-851d-e15194e8fe2c
+  answer_grade: correct
+  reason: Correctly describes per-token router selection of the main network and variable
+    compute; H-Net PDF p. 10.
+  evidence_pages: *id008
+  grader: assistant_manual_evidence_review
+- question_id: transformer_05
+  request_id: 800b130f-4101-419f-8f0c-5719e5529422
+  answer_grade: correct
+  reason: Correctly gives eight heads and dk=dv=64; Transformer PDF p. 5.
+  evidence_pages: &id009
+  - 5
+  grader: assistant_manual_evidence_review
+- question_id: transformer_05
+  request_id: 11531423-94a8-4040-824b-11862535fdb6
+  answer_grade: correct
+  reason: Correctly gives eight heads and dk=dv=64; Transformer PDF p. 5.
+  evidence_pages: *id009
+  grader: assistant_manual_evidence_review
+- question_id: transformer_05
+  request_id: 29df6069-7133-407b-b5ad-190e16642254
+  answer_grade: correct
+  reason: Correctly gives eight heads and dk=dv=64; Transformer PDF p. 5.
+  evidence_pages: *id009
+  grader: assistant_manual_evidence_review
+- question_id: moshi_05
+  request_id: d35dfb42-729a-4c78-bbc8-b030d7fa0bf0
+  answer_grade: correct
+  reason: Matches the reported strongest quality and speech-length improvement in
+    the ablation; Moshi PDF p. 26.
+  evidence_pages:
+  - 26
+  grader: assistant_manual_evidence_review
+- question_id: moshi_05
+  request_id: 34afc4a7-e994-47b9-91a3-ffe460a8fcf8
+  answer_grade: wrong
+  reason: Does not report the strongest quality-and-length ablation result and generalizes
+    the claim beyond the reported comparison; Moshi PDF p. 26.
+  evidence_pages:
+  - 15
+  - 16
+  - 26
+  grader: assistant_manual_evidence_review
+- question_id: hnet_05
+  request_id: dd487764-fc27-4037-b91c-b0d7c33f4d1e
+  answer_grade: refused_wrongly
+  reason: The monotone hierarchy-width rule and four-layer outer networks are in H-Net
+    PDF p. 6.
+  evidence_pages: &id010
+  - 6
+  grader: assistant_manual_evidence_review
+- question_id: hnet_05
+  request_id: ae164795-9cda-4a95-95de-e0f44f040053
+  answer_grade: refused_wrongly
+  reason: The monotone hierarchy-width rule and four-layer outer networks are in H-Net
+    PDF p. 6.
+  evidence_pages: *id010
+  grader: assistant_manual_evidence_review
+- question_id: hnet_05
+  request_id: 6563bf1f-dc3e-4d22-9a1c-4cd0134041c1
+  answer_grade: refused_wrongly
+  reason: The monotone hierarchy-width rule and four-layer outer networks are in H-Net
+    PDF p. 6.
+  evidence_pages: *id010
+  grader: assistant_manual_evidence_review

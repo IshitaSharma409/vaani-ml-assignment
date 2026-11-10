@@ -1,0 +1,153 @@
+schema_version: 1
+source_corpus:
+  - paper_id: "1706.03762"
+    version: "7"
+  - paper_id: "2410.00037"
+    version: "1"
+  - paper_id: "2507.07955"
+    version: "2"
+questions:
+  - id: transformer_01
+    question: "Why does Scaled Dot-Product Attention divide query-key dot products by the square root of d_k?"
+    answerable: true
+    expected_paper_id: "1706.03762"
+    expected_version: "7"
+    expected_pdf_pages: [4]
+    reference_answer: "For large d_k, dot products can grow in magnitude and push softmax into regions with extremely small gradients; scaling counters that effect."
+    grading_note: "Must mention large dot products and softmax's small-gradient regime; require a citation to PDF page 4."
+  - id: transformer_02
+    question: "How many identical layers are in the Transformer encoder and decoder stacks?"
+    answerable: true
+    expected_paper_id: "1706.03762"
+    expected_version: "7"
+    expected_pdf_pages: [3]
+    reference_answer: "Both the encoder and decoder have N=6 identical layers."
+    grading_note: "The decoder has an additional sub-layer, but the number of layers in both stacks is six."
+  - id: transformer_03
+    question: "What prevents a Transformer decoder position from attending to later output positions?"
+    answerable: true
+    expected_paper_id: "1706.03762"
+    expected_version: "7"
+    expected_pdf_pages: [3, 5]
+    reference_answer: "The decoder masks illegal future connections by setting their softmax inputs to negative infinity; output embeddings are also offset by one position."
+    grading_note: "Must describe causal masking; offset embeddings are supporting detail."
+  - id: transformer_04
+    question: "What functions are used for the Transformer positional encodings, and where are they added?"
+    answerable: true
+    expected_paper_id: "1706.03762"
+    expected_version: "7"
+    expected_pdf_pages: [6]
+    reference_answer: "Sine and cosine functions at different frequencies are used; positional encodings are added to the input embeddings at the bottoms of the encoder and decoder stacks."
+    grading_note: "Require both the functions and the addition location."
+  - id: transformer_05
+    question: "In the base Transformer, how many attention heads are used, and what are d_k and d_v for each head?"
+    answerable: true
+    expected_paper_id: "1706.03762"
+    expected_version: "7"
+    expected_pdf_pages: [5]
+    reference_answer: "The base model uses eight parallel heads, with d_k=d_v=64."
+    grading_note: "Do not confuse head dimension 64 with d_model=512."
+  - id: moshi_01
+    question: "What is Mimi, and how does it combine semantic and acoustic information?"
+    answerable: true
+    expected_paper_id: "2410.00037"
+    expected_version: "1"
+    expected_pdf_pages: [9, 10, 12]
+    reference_answer: "Mimi is a neural audio codec. It distills semantic information from a self-supervised speech model into a causal tokenizer and combines a semantic codebook with separate acoustic residual-vector-quantization codes."
+    grading_note: "Must distinguish semantic from acoustic codes and identify Mimi as the codec."
+  - id: moshi_02
+    question: "At what frame rate does Mimi encode audio, and what is the latent dimension stated for its encoder?"
+    answerable: true
+    expected_paper_id: "2410.00037"
+    expected_version: "1"
+    expected_pdf_pages: [10]
+    reference_answer: "Mimi produces 12.5 latent frames per second, with dimension D=512."
+    grading_note: "Both rate and dimension are required."
+  - id: moshi_03
+    question: "How many audio codebook subsequences does Moshi model, and at what temporal rate?"
+    answerable: true
+    expected_paper_id: "2410.00037"
+    expected_version: "1"
+    expected_pdf_pages: [14]
+    reference_answer: "The audio has Q=8 codebook subsequences at 12.5 steps per second."
+    grading_note: "Keep the number of subsequences distinct from the number of model attention heads."
+  - id: moshi_04
+    question: "Why does Moshi introduce a delay between semantic and acoustic audio tokens?"
+    answerable: true
+    expected_paper_id: "2410.00037"
+    expected_version: "1"
+    expected_pdf_pages: [14]
+    reference_answer: "A slight delay reduces dependencies between same-step subsequences, helps the larger temporal Transformer model their interdependence, and improves generation stability/quality under latency constraints."
+    grading_note: "A correct answer should describe reduced conditional dependence or improved stability/quality, not merely say the streams are asynchronous."
+  - id: moshi_05
+    question: "What does the paper report about the effect of enabling Inner Monologue in its additional ablations?"
+    answerable: true
+    expected_paper_id: "2410.00037"
+    expected_version: "1"
+    expected_pdf_pages: [26]
+    reference_answer: "The paper reports that enabling Inner Monologue produced the most drastic improvement in the quality and length of generated speech in those ablations."
+    grading_note: "Do not generalize this result beyond the paper's reported ablation context."
+  - id: hnet_01
+    question: "What signal does H-Net's routing module use to estimate likely chunk boundaries?"
+    answerable: true
+    expected_paper_id: "2507.07955"
+    expected_version: "2"
+    expected_pdf_pages: [6]
+    reference_answer: "It uses cosine similarity between adjacent encoder representations; contextual shifts are expected to have lower similarity."
+    grading_note: "Must identify adjacent representations and cosine similarity."
+  - id: hnet_02
+    question: "What problem does H-Net's smoothing module address during decompression?"
+    answerable: true
+    expected_paper_id: "2507.07955"
+    expected_version: "2"
+    expected_pdf_pages: [7]
+    reference_answer: "It creates smooth interpolations that make boundary learning differentiable and can correct misalignment from uncertain boundaries during upsampling."
+    grading_note: "Require the decompression/boundary role, not just the EMA formula."
+  - id: hnet_03
+    question: "Why does H-Net add a ratio loss to its dynamic chunking objective?"
+    answerable: true
+    expected_paper_id: "2507.07955"
+    expected_version: "2"
+    expected_pdf_pages: [8]
+    reference_answer: "Without regularization, chunking may converge to trivial extremes: retaining almost every vector or compressing too aggressively; ratio loss guides the desired compression."
+    grading_note: "Both trivial extremes or their equivalent must be explained."
+  - id: hnet_04
+    question: "During inference, how does H-Net decide whether each token should use the main network?"
+    answerable: true
+    expected_paper_id: "2507.07955"
+    expected_version: "2"
+    expected_pdf_pages: [10]
+    reference_answer: "The routing module decides per token whether it should be processed by the main network, allowing computation to vary by token."
+    grading_note: "Distinguish per-token conditional computation from fixed-size pooling."
+  - id: hnet_05
+    question: "What two design principles does H-Net state for its hierarchy width and outer encoder/decoder depth?"
+    answerable: true
+    expected_paper_id: "2507.07955"
+    expected_version: "2"
+    expected_pdf_pages: [6]
+    reference_answer: "Model width is monotone across hierarchy stages (D0≤…≤DS), and the outer encoder/decoder networks use four layers or the equivalent of four Mamba layers."
+    grading_note: "Require the width rule and the stated layer depth."
+  - id: library_01
+    question: "What is the commercial per-minute API price of Moshi for individual users?"
+    answerable: false
+    expected_paper_id: null
+    expected_version: null
+    expected_pdf_pages: []
+    reference_answer: "The three-paper library does not state an individual commercial API price for Moshi."
+    grading_note: "A refusal is correct; any invented price is wrong."
+  - id: library_02
+    question: "Which production system first deployed the Transformer architecture, and on what exact launch date?"
+    answerable: false
+    expected_paper_id: null
+    expected_version: null
+    expected_pdf_pages: []
+    reference_answer: "The fixed papers do not establish a production deployment system or exact launch date for the Transformer."
+    grading_note: "A refusal is correct; paper publication or training dates do not answer deployment history."
+  - id: library_03
+    question: "On which LibriSpeech test-clean score did H-Net outperform Moshi in a direct head-to-head evaluation?"
+    answerable: false
+    expected_paper_id: null
+    expected_version: null
+    expected_pdf_pages: []
+    reference_answer: "The library does not report a direct H-Net versus Moshi LibriSpeech test-clean comparison."
+    grading_note: "A refusal is correct; do not combine unrelated experiments from separate papers."

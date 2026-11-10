@@ -1,0 +1,37 @@
+{
+  "source": "local_retrieval",
+  "method": "page-and-version exact hit within configured top_k",
+  "dataset_path": "src\\relay\\evaluation\\questions.yaml",
+  "summary": {
+    "small_fast": {
+      "questions_total": 18,
+      "answerable_questions": 15,
+      "answerable_hit_at_3_count": 9,
+      "answerable_hit_at_3": 0.6,
+      "mean_reciprocal_rank_at_3": 0.5666666666666667,
+      "unanswerable_questions": 3,
+      "mean_vector_search_ms": 26.580200000252162,
+      "mean_rerank_ms": 0.0
+    },
+    "medium": {
+      "questions_total": 18,
+      "answerable_questions": 15,
+      "answerable_hit_at_3_count": 11,
+      "answerable_hit_at_3": 0.7333333333333333,
+      "mean_reciprocal_rank_at_3": 0.6555555555555556,
+      "unanswerable_questions": 3,
+      "mean_vector_search_ms": 20.73147222593737,
+      "mean_rerank_ms": 0.0
+    },
+    "medium_reranked": {
+      "questions_total": 18,
+      "answerable_questions": 15,
+      "answerable_hit_at_3_count": 12,
+      "answerable_hit_at_3": 0.8,
+      "mean_reciprocal_rank_at_3": 0.7222222222222222,
+      "unanswerable_questions": 3,
+      "mean_vector_search_ms": 21.6037444543973,
+      "mean_rerank_ms": 0.6509500090032816
+    }
+  }
+}

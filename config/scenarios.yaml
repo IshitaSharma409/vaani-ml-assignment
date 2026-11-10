@@ -1,19 +1,43 @@
-# Scenario names and backends are fixed by the assignment/plan. Arrival rates,
-# durations, queue sizes and limits will be calibrated after the Phase 1 baseline.
-calibration_status: pending_phase_1_baseline
+# Fixed starting configurations for the Phase 4 runner. These are synthetic
+# stand-in experiments, not measurements or claims about Groq capacity.
+schema_version: 1
+backend: stand-in
+profile: config/standin_profile.yaml
+seed: 29
+status: fixed_pre_run_configuration_executed
 scenarios:
   steady:
-    backend: stand-in
-    load_shape: approximately_constant
+    description: Approximately constant offered load below configured capacity.
+    duration_seconds: 60
+    offered_requests_per_second: 0.5
+    request_count: 30
+    profile_overrides: {}
   burst:
-    backend: stand-in
-    load_shape: short_burst
+    description: Synchronous short burst to exercise bounded queue admission.
+    duration_seconds: 1
+    request_count: 20
+    arrival_pattern: simultaneous
+    profile_overrides: {}
   sustained_overload:
-    backend: stand-in
-    load_shape: offered_rate_above_capacity
+    description: Sustained offered load above worker/model concurrency capacity.
+    duration_seconds: 30
+    offered_requests_per_second: 2.0
+    request_count: 60
+    profile_overrides: {}
   per_minute_limit_halved:
-    backend: stand-in
-    load_shape: simulated_minute_capacity_half_baseline
+    description: Same base profile with synthetic RPM set to half its baseline.
+    duration_seconds: 60
+    request_count: 20
+    profile_overrides:
+      requests_per_minute: 15
   daily_budget_exhausted:
-    backend: stand-in
-    load_shape: simulated_daily_budget_already_exhausted
+    description: Exhaust a deliberately small synthetic daily request budget, then probe it.
+    request_count: 6
+    profile_overrides:
+      requests_per_day: 5
+    setup_requests_before_measurement: 5
+
+# The scenario values above were fixed before Phase 4 runs. Run evidence and
+# post-run interpretation are preserved separately and do not alter this config.
+post_run_notes:
+  steady: "The initial below-capacity assumption was disproved: only 3 of 30 offers completed because the synthetic TPM ceiling was reached. Preserve the fixed arrival shape and report it as a constant-arrival saturation run."

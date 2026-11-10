@@ -1,5 +1,6 @@
-# Starting candidates proposed by IMPLEMENTATION_PLAN.md, not measured winners.
-default_setting: medium
+# Selected from the Phase 4 corpus retrieval comparison; see the raw and summary
+# records under experiments/ for scope and measurement details.
+default_setting: medium_reranked
 embedding:
   provider: local
   model_id: sentence-transformers/all-MiniLM-L6-v2

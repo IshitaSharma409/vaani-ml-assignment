@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
 from relay.retrieval.index import RetrievalService
 
 
@@ -14,12 +18,26 @@ QUESTIONS = [
 
 def main() -> None:
     service = RetrievalService()
+    output_path = Path(__file__).resolve().parents[1] / "experiments/raw/phase2_retrieval_smoke.jsonl"
     for question in QUESTIONS:
-        passages, timing = service.search(question, "medium")
-        print(f"\nQUESTION: {question}\nTIMING: {timing}")
-        for passage in passages:
-            excerpt = " ".join(passage["chunk_text"].split())[:260].encode("ascii", "backslashreplace").decode("ascii")
-            print(f"{passage['paper_id']}v{passage['arxiv_version']} PDF p.{passage['pdf_page_number']} score={passage['score']:.3f}: {excerpt}")
+        for setting in ("small_fast", "medium", "medium_reranked"):
+            passages, timing = service.search(question, setting)
+            record = {
+                "source": "local_retrieval",
+                "scenario": "phase2_retrieval_smoke",
+                "start_time": datetime.now(timezone.utc).isoformat(),
+                "question": question,
+                "retrieval_setting": setting,
+                "retrieval_parameters": service.config["settings"][setting],
+                "timings": timing,
+                "results": [{key: passage.get(key) for key in ("chunk_id", "paper_id", "title", "arxiv_version", "pdf_page_number", "retrieval_score", "rerank_score")} for passage in passages],
+            }
+            with output_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+            print(f"\nSETTING: {setting} | QUESTION: {question}\nTIMING: {timing}")
+            for passage in passages:
+                excerpt = " ".join(passage["chunk_text"].split())[:180].encode("ascii", "backslashreplace").decode("ascii")
+                print(f"{passage['paper_id']}v{passage['arxiv_version']} PDF p.{passage['pdf_page_number']} vector={passage['retrieval_score']:.3f} rerank={passage['rerank_score']}: {excerpt}")
 
 
 if __name__ == "__main__":

@@ -37,7 +37,8 @@ class GroqSettings:
             )
         return cls(api_key=SecretStr(api_key), model=model)
 
-    def create_chat_model(self, http_client: Any | None = None) -> ChatGroq:
+    def create_chat_model(self, http_client: Any | None = None, *, max_tokens: int = 512,
+                          timeout_seconds: float | None = None) -> ChatGroq:
         """Create a ChatGroq client with hidden SDK retries disabled.
 
         Application-level retry logic will own and count retry attempts.
@@ -47,7 +48,8 @@ class GroqSettings:
             model=self.model,
             api_key=self.api_key.get_secret_value(),
             temperature=0,
-            timeout=self.timeout_seconds,
+            timeout=timeout_seconds or self.timeout_seconds,
+            max_tokens=max_tokens,
             max_retries=0,
             streaming=True,
             # The installed Groq SDK accepts undocumented API body fields via

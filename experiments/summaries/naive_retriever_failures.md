@@ -1,0 +1,11 @@
+# Three ways this paper library can mislead a naive retriever
+
+These examples are actual top-three retrieval outputs from `experiments/raw/retrieval_evaluation.jsonl` using `medium_reranked`. Page numbers are PDF pages. The dataset includes the control questions; a retrieved passage is not proof that the answer exists.
+
+1. **A model paper is mistaken for a commercial service price.** Question: “What is the commercial per-minute API price of Moshi for individual users?” The top results are Moshi v1 pages 17, 20, and 6, with rerank scores 0.844, 0.777, and 0.743. They discuss simulated dialogue, training, and the model overview; none states an individual API price. A keyword or similarity-only system may treat these highly ranked passages as evidence for a price. The correct evidence is that the fixed paper corpus does not provide the requested price, so the system should abstain.
+
+2. **“Transformer” retrieves benchmark details instead of deployment history.** Question: “Which production system first deployed the Transformer architecture, and on what exact launch date?” Top results include Attention Is All You Need PDF pages 9 and 8 (translation experiment tables and training-cost discussion) plus an unrelated H-Net page 19. These contain architecture and benchmark terms, not a production system or launch date. The source passage that can answer the question is absent because none of the three papers documents that deployment history. Treating the paper's experiment dates or metrics as launch evidence would invent an answer.
+
+3. **Similar benchmark vocabulary creates a false head-to-head comparison.** Question: “On which LibriSpeech test-clean score did H-Net outperform Moshi in a direct head-to-head evaluation?” The top results mix H-Net PDF pages 12 and 12 with Moshi PDF page 22: H-Net language-model training curves and text-language benchmark tables. They do not report a shared LibriSpeech test-clean experiment, and results from separate papers/tasks are not comparable. The required comparative passage does not exist in the corpus; the correct outcome is refusal.
+
+The matching raw retrieval rows retain all returned passages, scores, paper identifiers, versions, and PDF pages. These are corpus-scope failures, rather than proof that the retriever alone can establish an answer's truth.

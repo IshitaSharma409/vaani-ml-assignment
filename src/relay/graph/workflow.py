@@ -52,6 +52,8 @@ def compile_workflow(retrieval_service: Any, model: Any, page_counts: dict[str, 
                                 {"verify_answer": "verify_answer", "refuse_safely": "refuse_safely", "end": END})
 
     def verification_route(state: RelayState) -> str:
+        if state.get("final_status") == "error":
+            return "end"
         if state.get("verification_passed"):
             return "finalize_response"
         if state.get("revision_attempts", 0) < 1:
@@ -59,8 +61,16 @@ def compile_workflow(retrieval_service: Any, model: Any, page_counts: dict[str, 
         return "refuse_safely"
 
     graph.add_conditional_edges("verify_answer", verification_route,
-                                {"finalize_response": "finalize_response", "revise_answer": "revise_answer", "refuse_safely": "refuse_safely"})
-    graph.add_edge("revise_answer", "verify_answer")
+                                {"finalize_response": "finalize_response", "revise_answer": "revise_answer", "refuse_safely": "refuse_safely", "end": END})
+    def revision_route(state: RelayState) -> str:
+        if state.get("final_status") == "error":
+            return "end"
+        if state.get("refusal_reason"):
+            return "refuse_safely"
+        return "verify_answer"
+
+    graph.add_conditional_edges("revise_answer", revision_route,
+                                {"end": END, "refuse_safely": "refuse_safely", "verify_answer": "verify_answer"})
     graph.add_edge("finalize_response", END)
     graph.add_edge("refuse_safely", END)
     return graph.compile()

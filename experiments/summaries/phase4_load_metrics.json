@@ -1,0 +1,191 @@
+{
+  "source": "stand-in",
+  "percentile_method": "NumPy linear quantile",
+  "summary": {
+    "burst": {
+      "request_count": 20,
+      "successful_count": 2,
+      "status_counts": {
+        "error": 8,
+        "ok": 2,
+        "rate_limited": 10
+      },
+      "user_outcome_counts": {
+        "rejected": 8,
+        "success": 2,
+        "error": 10
+      },
+      "latency_percentiles": {
+        "first_token_ms": {
+          "population": "status=ok and first_token_ms is present",
+          "n": 2,
+          "p50": 2000.0000000291038,
+          "p95": 2042.3000000213506,
+          "p99": 2046.0600000206614
+        },
+        "total_ms": {
+          "population": "status=ok",
+          "n": 2,
+          "p50": 2000.0000000291038,
+          "p95": 2042.3000000213506,
+          "p99": 2046.0600000206614
+        }
+      },
+      "mean_tokens_per_request": 1903.75,
+      "total_retries": 0,
+      "peak_queue_length": 8,
+      "mean_queue_wait_ms": 982.8500000061467,
+      "mean_active_work_ms": 546.999999997206,
+      "mean_retry_wait_ms": 0.0,
+      "run_count": 1,
+      "offered_requests": 20,
+      "mean_offered_rate_per_second": 6.882312457082596
+    },
+    "daily_budget_exhausted": {
+      "request_count": 1,
+      "successful_count": 0,
+      "status_counts": {
+        "rate_limited": 1
+      },
+      "user_outcome_counts": {
+        "error": 1
+      },
+      "latency_percentiles": {
+        "first_token_ms": {
+          "population": "status=ok and first_token_ms is present",
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null
+        },
+        "total_ms": {
+          "population": "status=ok",
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null
+        }
+      },
+      "mean_tokens_per_request": null,
+      "total_retries": 0,
+      "peak_queue_length": 1,
+      "mean_queue_wait_ms": 16.00000000325963,
+      "mean_active_work_ms": 391.00000000325963,
+      "mean_retry_wait_ms": 0.0,
+      "run_count": 1,
+      "offered_requests": 1,
+      "mean_offered_rate_per_second": 2.369668246330445
+    },
+    "per_minute_limit_halved": {
+      "request_count": 20,
+      "successful_count": 3,
+      "status_counts": {
+        "ok": 3,
+        "rate_limited": 17
+      },
+      "user_outcome_counts": {
+        "success": 3,
+        "error": 17
+      },
+      "latency_percentiles": {
+        "first_token_ms": {
+          "population": "status=ok and first_token_ms is present",
+          "n": 3,
+          "p50": 1547.000000020489,
+          "p95": 1645.1000000175554,
+          "p99": 1653.8200000172947
+        },
+        "total_ms": {
+          "population": "status=ok",
+          "n": 3,
+          "p50": 1547.000000020489,
+          "p95": 1645.1000000175554,
+          "p99": 1653.8200000172947
+        }
+      },
+      "mean_tokens_per_request": 2474.0,
+      "total_retries": 0,
+      "peak_queue_length": 1,
+      "mean_queue_wait_ms": 0.0,
+      "mean_active_work_ms": 248.7000000110129,
+      "mean_retry_wait_ms": 0.0,
+      "run_count": 1,
+      "offered_requests": 20,
+      "mean_offered_rate_per_second": 1.0457516339869282
+    },
+    "steady": {
+      "request_count": 30,
+      "successful_count": 3,
+      "status_counts": {
+        "ok": 3,
+        "rate_limited": 27
+      },
+      "user_outcome_counts": {
+        "success": 3,
+        "error": 27
+      },
+      "latency_percentiles": {
+        "first_token_ms": {
+          "population": "status=ok and first_token_ms is present",
+          "n": 3,
+          "p50": 1391.0000000032596,
+          "p95": 1671.7999999818858,
+          "p99": 1696.7599999799859
+        },
+        "total_ms": {
+          "population": "status=ok",
+          "n": 3,
+          "p50": 1391.0000000032596,
+          "p95": 1671.7999999818858,
+          "p99": 1696.7599999799859
+        }
+      },
+      "mean_tokens_per_request": 2474.0,
+      "total_retries": 0,
+      "peak_queue_length": 1,
+      "mean_queue_wait_ms": 0.0,
+      "mean_active_work_ms": 179.29999999081096,
+      "mean_retry_wait_ms": 0.0,
+      "run_count": 1,
+      "offered_requests": 30,
+      "mean_offered_rate_per_second": 0.5161290322580645
+    },
+    "sustained_overload": {
+      "request_count": 60,
+      "successful_count": 2,
+      "status_counts": {
+        "ok": 2,
+        "rate_limited": 58
+      },
+      "user_outcome_counts": {
+        "success": 2,
+        "error": 58
+      },
+      "latency_percentiles": {
+        "first_token_ms": {
+          "population": "status=ok and first_token_ms is present",
+          "n": 2,
+          "p50": 1687.4999999708962,
+          "p95": 1800.4499999660766,
+          "p99": 1810.4899999656482
+        },
+        "total_ms": {
+          "population": "status=ok",
+          "n": 2,
+          "p50": 1687.4999999708962,
+          "p95": 1800.4499999660766,
+          "p99": 1810.4899999656482
+        }
+      },
+      "mean_tokens_per_request": 1903.75,
+      "total_retries": 0,
+      "peak_queue_length": 1,
+      "mean_queue_wait_ms": 0.0,
+      "mean_active_work_ms": 143.96666663039164,
+      "mean_retry_wait_ms": 0.0,
+      "run_count": 1,
+      "offered_requests": 60,
+      "mean_offered_rate_per_second": 2.0263424518753226
+    }
+  }
+}

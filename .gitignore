@@ -9,12 +9,17 @@ __pycache__/
 
 # Rebuildable local data and experiment outputs
 data/vectorstore/
+experiments/raw/local_budget_state.json
 
 # Tooling
 .pytest_cache/
+/tmp/
 .ruff_cache/
 .coverage
 htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Generated draft report preview
+/submissions/final_report_draft.pdf

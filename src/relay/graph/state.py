@@ -24,4 +24,6 @@ class RelayState(TypedDict, total=False):
     final_status: str
     call_usage: list[dict[str, Any]]
     stage_timings: dict[str, float]
+    failure_stage: str
+    failure_detail: str
 

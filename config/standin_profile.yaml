@@ -1,0 +1,48 @@
+profile_id: relay-standin-phase3-v1
+model_id: relay-standin-v1
+provider_label: local_simulation
+seed: 29
+
+latency:
+  # Empirical observations from three real Phase 1 ChatGroq streams.
+  first_token_ms_samples: [455.1, 620.5, 697.1]
+  total_ms_samples: [460.7, 624.4, 702.9]
+  # Real inter-token timings were not captured; these are simulation assumptions.
+  chunk_chars: 24
+  inter_chunk_ms: 3
+  load_slowdown_ms_per_extra_active_request: 80
+
+limits:
+  requests_per_minute: 30
+  tokens_per_minute: 8000
+  requests_per_day: 1000
+  tokens_per_day: 200000
+  concurrent_requests: 2
+
+failures:
+  forced_failure_statuses: []
+  fail_probability: 0.0
+  fail_every_n_requests: 0
+  partial_stream_after_chunks: null
+
+calibration:
+  source: experiments/raw/groq_probe.jsonl
+  real_sample_count: 3
+  observed_usage_per_sample:
+    input_tokens: 78
+    output_tokens: 35
+    total_tokens: 113
+  usage_sample_ids:
+    - 5afcbc50-7dc0-4952-b2a4-abd06e6d49f9
+    - 58bcfd7b-d57f-4a3a-bc1a-5a9e69cfb487
+    - 880a9bba-4a98-4805-8e1d-17368733dc8c
+  usage_simulation_note: "The stand-in returns synthetic char/4 estimates for its own request/response text; it does not force these observed provider counts onto different prompts."
+  first_token_sample_ids:
+    - 5afcbc50-7dc0-4952-b2a4-abd06e6d49f9
+    - 58bcfd7b-d57f-4a3a-bc1a-5a9e69cfb487
+    - 880a9bba-4a98-4805-8e1d-17368733dc8c
+  caveats:
+    - "Only three single-user requests were measured; no latency distribution claim is supported."
+    - "The API reports first-token and total time, but inter-token pacing is not retained; 3 ms between chunks is an explicit simulator assumption."
+    - "Concurrency slowdown and failure behavior are scenario assumptions, not measured Groq internals."
+    - "The stand-in emits deterministic JSON-shaped content for workflow tests, not a quality-equivalent answer."

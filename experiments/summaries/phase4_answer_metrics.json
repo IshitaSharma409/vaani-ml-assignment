@@ -1,0 +1,91 @@
+{
+  "source": "real Groq low-rate application requests; derived from evaluation_answers.jsonl and results.csv",
+  "request_count": 54,
+  "sample_design": "15 unique answerable questions x 3 retrieval settings; 9 repeated request(s) are retained in addition to the unique-question comparison",
+  "warning": "Small exploratory sample; operational errors and local safety limiter outcomes are retained.",
+  "summary": {
+    "medium": {
+      "offered": 18,
+      "status_counts": {
+        "error": 3,
+        "ok": 15
+      },
+      "usable_answer_count": 15,
+      "grade_counts_on_usable_answers": {
+        "correct": 7,
+        "refused_wrongly": 3,
+        "wrong": 5
+      },
+      "usable_answer_latency_ms": {
+        "population": "status=ok; application total_ms in results.csv for real-source requests",
+        "n": 15,
+        "p50": 2750.0,
+        "p95": 6583.900000003626,
+        "p99": 9979.179999984332
+      },
+      "token_counts_by_provenance": {
+        "provider": {
+          "requests_with_counts": 18,
+          "total_tokens": 58049
+        }
+      }
+    },
+    "medium_reranked": {
+      "offered": 18,
+      "status_counts": {
+        "error": 6,
+        "ok": 11,
+        "rate_limited": 1
+      },
+      "usable_answer_count": 11,
+      "grade_counts_on_usable_answers": {
+        "correct": 6,
+        "refused_wrongly": 1,
+        "wrong": 4
+      },
+      "usable_answer_latency_ms": {
+        "population": "status=ok; application total_ms in results.csv for real-source requests",
+        "n": 11,
+        "p50": 2515.00000001397,
+        "p95": 5219.000000011874,
+        "p99": 6843.800000002377
+      },
+      "token_counts_by_provenance": {
+        "mixed": {
+          "requests_with_counts": 1,
+          "total_tokens": 1921
+        },
+        "provider": {
+          "requests_with_counts": 17,
+          "total_tokens": 56693
+        }
+      }
+    },
+    "small_fast": {
+      "offered": 18,
+      "status_counts": {
+        "error": 3,
+        "ok": 15
+      },
+      "usable_answer_count": 15,
+      "grade_counts_on_usable_answers": {
+        "correct": 9,
+        "refused_wrongly": 3,
+        "wrong": 3
+      },
+      "usable_answer_latency_ms": {
+        "population": "status=ok; application total_ms in results.csv for real-source requests",
+        "n": 15,
+        "p50": 2436.9999999762513,
+        "p95": 5236.700000026028,
+        "p99": 6697.740000024203
+      },
+      "token_counts_by_provenance": {
+        "provider": {
+          "requests_with_counts": 18,
+          "total_tokens": 48515
+        }
+      }
+    }
+  }
+}

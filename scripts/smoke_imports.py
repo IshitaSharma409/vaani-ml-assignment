@@ -11,6 +11,7 @@ def main() -> None:
     import langchain_groq
     import langchain_huggingface
     import langchain_openai
+    import langchain_text_splitters
     import langgraph
     import matplotlib
     import numpy
@@ -24,6 +25,11 @@ def main() -> None:
     from langchain_core.prompts import ChatPromptTemplate
     from langgraph.graph import END, START, StateGraph
     from langchain_groq import ChatGroq
+    from relay.api import create_app
+    from relay.observability.csv_writer import CSV_COLUMNS, REQUIRED_COLUMNS
+    from relay.reliability.admission import AdmissionController
+    from relay.reliability.retry import RetryingModel
+    from relay.standin.app import create_standin_app
     from typing import TypedDict
 
     class SmokeState(TypedDict):
@@ -39,6 +45,8 @@ def main() -> None:
     )
     assert compiled_graph.invoke({"value": "ok"}) == {"value": "ok"}
     assert prompt.format_messages(question="smoke")
+    assert CSV_COLUMNS[:len(REQUIRED_COLUMNS)] == REQUIRED_COLUMNS
+    assert create_app and AdmissionController and RetryingModel and create_standin_app
 
     modules = (
         fastapi,
@@ -48,6 +56,7 @@ def main() -> None:
         langchain_groq,
         langchain_huggingface,
         langchain_openai,
+        langchain_text_splitters,
         langgraph,
         matplotlib,
         numpy,
@@ -58,7 +67,7 @@ def main() -> None:
         seaborn,
         yaml,
     )
-    print("Imported", len(modules), "selected modules and core framework symbols.")
+    print("Imported", len(modules), "selected third-party modules and Phase 3 service symbols.")
     print("ChatGroq:", ChatGroq.__name__)
     print("ChatPromptTemplate:", ChatPromptTemplate.__name__)
     print("StateGraph:", StateGraph.__name__, "compiled graph and prompt smoke check passed.")
