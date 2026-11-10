@@ -1,0 +1,19 @@
+project_name: The Relay
+environment: local
+
+llm:
+  provider: groq
+  model_env_var: GROQ_MODEL
+  api_key_env_var: GROQ_API_KEY
+  temperature: 0
+  timeout_seconds: 30
+  max_retries: 0 # Application code will own and count retries explicitly.
+
+request:
+  deadline_seconds: 60
+  queue_capacity: 8 # Initial value; tune only after measured baseline and queue tests.
+  max_concurrent_model_calls: 2
+
+logging:
+  level: INFO
+  redact_secrets: true

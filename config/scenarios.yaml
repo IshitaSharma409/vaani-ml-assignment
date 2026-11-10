@@ -1,0 +1,19 @@
+# Scenario names and backends are fixed by the assignment/plan. Arrival rates,
+# durations, queue sizes and limits will be calibrated after the Phase 1 baseline.
+calibration_status: pending_phase_1_baseline
+scenarios:
+  steady:
+    backend: stand-in
+    load_shape: approximately_constant
+  burst:
+    backend: stand-in
+    load_shape: short_burst
+  sustained_overload:
+    backend: stand-in
+    load_shape: offered_rate_above_capacity
+  per_minute_limit_halved:
+    backend: stand-in
+    load_shape: simulated_minute_capacity_half_baseline
+  daily_budget_exhausted:
+    backend: stand-in
+    load_shape: simulated_daily_budget_already_exhausted

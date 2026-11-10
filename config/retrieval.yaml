@@ -1,0 +1,25 @@
+# Starting candidates proposed by IMPLEMENTATION_PLAN.md, not measured winners.
+default_setting: medium
+embedding:
+  provider: local
+  model_id: sentence-transformers/all-MiniLM-L6-v2
+  revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+
+settings:
+  small_fast:
+    chunk_size_chars: 600
+    chunk_overlap_chars: 100
+    top_k: 3
+    rerank: false
+  medium:
+    chunk_size_chars: 1000
+    chunk_overlap_chars: 150
+    top_k: 3
+    rerank: false
+  medium_reranked:
+    chunk_size_chars: 1000
+    chunk_overlap_chars: 150
+    candidate_k: 5
+    top_k: 3
+    rerank: true
+    reranker: bm25

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "the-relay"
+version = "0.1.0"
+description = "Citation-grounded research assistant under constrained model capacity"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "python-dotenv>=1.0,<2",
+  "pydantic>=2.8,<3",
+  "PyYAML>=6.0,<7",
+  "langchain>=1.0,<2",
+  "langchain-text-splitters>=1.0,<2",
+  "langgraph>=1.0,<2",
+  "langchain-groq>=1.0,<2",
+  "langchain-openai>=1.0,<2",
+  "langchain-chroma>=1.0,<2",
+  "langchain-huggingface>=1.0,<2",
+  "sentence-transformers>=5.0,<6",
+  "pypdf>=6.0,<7",
+  "fastapi>=0.120,<1",
+  "uvicorn[standard]>=0.38,<1",
+  "httpx>=0.28,<1",
+  "pandas>=2.2,<4",
+  "numpy>=2.0,<3",
+  "matplotlib>=3.9,<4",
+  "seaborn>=0.13,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"

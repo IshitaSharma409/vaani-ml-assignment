@@ -1,0 +1,20 @@
+# Local credentials and environment
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Rebuildable local data and experiment outputs
+data/vectorstore/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/

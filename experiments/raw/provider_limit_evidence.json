@@ -1,0 +1,110 @@
+{
+  "documentation_checked_at": "2026-11-10",
+  "account_plan": "Free tier required by the assignment; exact account plan not independently confirmed",
+  "organization_or_project": null,
+  "selected_model": "openai/gpt-oss-120b",
+  "account_specific_values": {
+    "requests_per_minute": null,
+    "tokens_per_minute": 8000,
+    "requests_per_day": 1000,
+    "tokens_per_day": null,
+    "input_tokens_per_minute": null,
+    "output_tokens_per_minute": null,
+    "requests_in_flight": null,
+    "recovery_time": "not measured; no 429 response was encountered"
+  },
+  "account_evidence_status": "model access verified; RPD and TPM confirmed by response headers; RPM/TPD and concurrency not independently confirmed in account settings",
+  "official_documentation": {
+    "source_url": "https://console.groq.com/docs/rate-limits",
+    "documented_limit_dimensions": [
+      "RPM",
+      "RPD",
+      "TPM",
+      "TPD",
+      "ITPM where configured",
+      "OTPM where configured"
+    ],
+    "scope": "organization-level",
+    "on_limit": "HTTP 429 Too Many Requests",
+    "retry_after": "documented as present only when a 429 limit response is returned",
+    "rate_limit_headers": "documentation says remaining/limit/reset headers are returned; values shown in the documentation are illustrative",
+    "exact_values": "the account Limits page is the source for current organization-specific values; this project has not accessed that page"
+  },
+  "evidence_notes": [
+    "No published example value has been treated as this account's limit.",
+    "No 429 response, reset time, concurrency limit, or recovery behavior has been observed.",
+    "Revisit this record after the user configures their own Groq model and key locally."
+  ],
+  "model_access": {
+    "verified": true,
+    "accessible_model_count": 11,
+    "checked_via": "authenticated Groq models endpoint",
+    "check_date": "2026-11-10"
+  },
+  "account_header_evidence": {
+    "source": "three successful real streamed completions",
+    "headers_by_request": [
+      {
+        "request_id": "5afcbc50-7dc0-4952-b2a4-abd06e6d49f9",
+        "status": "ok",
+        "first_model_token_ms": 697.0548999961466,
+        "total_ms": 702.8598000179045,
+        "tokens_in": 78,
+        "tokens_out": 35,
+        "headers": {
+          "x-ratelimit-limit-requests": "1000",
+          "x-ratelimit-limit-tokens": "8000",
+          "x-ratelimit-remaining-requests": "999",
+          "x-ratelimit-remaining-tokens": "7548",
+          "x-ratelimit-reset-requests": "1m26.4s",
+          "x-ratelimit-reset-tokens": "3.39s"
+        }
+      },
+      {
+        "request_id": "58bcfd7b-d57f-4a3a-bc1a-5a9e69cfb487",
+        "status": "ok",
+        "first_model_token_ms": 620.5459000193514,
+        "total_ms": 624.413600016851,
+        "tokens_in": 78,
+        "tokens_out": 35,
+        "headers": {
+          "x-ratelimit-limit-requests": "1000",
+          "x-ratelimit-limit-tokens": "8000",
+          "x-ratelimit-remaining-requests": "998",
+          "x-ratelimit-remaining-tokens": "7887",
+          "x-ratelimit-reset-requests": "2m52.8s",
+          "x-ratelimit-reset-tokens": "847ms"
+        }
+      },
+      {
+        "request_id": "880a9bba-4a98-4805-8e1d-17368733dc8c",
+        "status": "ok",
+        "first_model_token_ms": 455.05879999836907,
+        "total_ms": 460.6760999886319,
+        "tokens_in": 78,
+        "tokens_out": 35,
+        "headers": {
+          "x-ratelimit-limit-requests": "1000",
+          "x-ratelimit-limit-tokens": "8000",
+          "x-ratelimit-remaining-requests": "997",
+          "x-ratelimit-remaining-tokens": "7887",
+          "x-ratelimit-reset-requests": "4m19.2s",
+          "x-ratelimit-reset-tokens": "847ms"
+        }
+      }
+    ],
+    "interpretation": "x-ratelimit-limit-requests maps to RPD and x-ratelimit-limit-tokens maps to TPM per official documentation. The three responses reported 1000 RPD and 8000 TPM. No retry-after header was expected or observed because all calls succeeded.",
+    "reset_header_caveat": "Raw reset headers are preserved above. Their values increased across successful requests and are not used as a verified daily recovery time."
+  },
+  "documented_current_free_plan_reference": {
+    "source_url": "https://console.groq.com/docs/rate-limits",
+    "model_id": "openai/gpt-oss-120b",
+    "requests_per_minute": 30,
+    "requests_per_day": 1000,
+    "tokens_per_minute": 8000,
+    "tokens_per_day": 200000,
+    "confidence": "medium for this account; official documentation labels its table a high-level summary and directs users to the account Limits page for exact values"
+  },
+  "observed_rate_limit_event": "none; all three provider completion requests succeeded",
+  "last_updated_at_utc": "2026-11-10T09:14:33Z"
+}

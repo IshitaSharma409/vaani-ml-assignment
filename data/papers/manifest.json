@@ -1,0 +1,45 @@
+{
+  "corpus_scope": "Exactly the three assignment-specified arXiv versions",
+  "manifest_created_at_utc": "2026-11-10T08:31:36Z",
+  "papers": [
+    {
+      "arxiv_id": "1706.03762",
+      "version": "7",
+      "title": "Attention Is All You Need",
+      "filename": "1706.03762v7.pdf",
+      "source_url": "https://arxiv.org/pdf/1706.03762v7",
+      "downloaded_at_utc": "2026-11-10T07:58:52Z",
+      "verified_at_utc": "2026-11-10T08:31:36Z",
+      "page_count": 15,
+      "file_size_bytes": 2215244,
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "verification": "PDF parses and expected title appears on its first page"
+    },
+    {
+      "arxiv_id": "2410.00037",
+      "version": "1",
+      "title": "Moshi: a speech-text foundation model for real-time dialogue",
+      "filename": "2410.00037v1.pdf",
+      "source_url": "https://arxiv.org/pdf/2410.00037v1",
+      "downloaded_at_utc": "2026-11-10T07:58:53Z",
+      "verified_at_utc": "2026-11-10T08:31:36Z",
+      "page_count": 66,
+      "file_size_bytes": 4694312,
+      "sha256": "a687144cc77bea86b0c60ae800ccb1d3e0816033fa5c7960388fe29a0dbfcfac",
+      "verification": "PDF parses and expected title appears on its first page"
+    },
+    {
+      "arxiv_id": "2507.07955",
+      "version": "2",
+      "title": "Dynamic Chunking for End-to-End Hierarchical Sequence Modeling",
+      "filename": "2507.07955v2.pdf",
+      "source_url": "https://arxiv.org/pdf/2507.07955v2",
+      "downloaded_at_utc": "2026-11-10T07:58:54Z",
+      "verified_at_utc": "2026-11-10T08:31:36Z",
+      "page_count": 39,
+      "file_size_bytes": 1375282,
+      "sha256": "04a2b32e6e82853cfc23c5db132750874a86cde99219ec6f664128f4aa83122f",
+      "verification": "PDF parses and expected title appears on its first page"
+    }
+  ]
+}
