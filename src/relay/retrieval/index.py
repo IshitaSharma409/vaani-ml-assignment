@@ -125,7 +125,9 @@ class RetrievalService:
         rerank_seconds = 0.0
         if options.get("rerank"):
             start = time.perf_counter()
-            docs_scores = [(doc, score, self._bm25_score(query, doc.page_content)) for doc, score in results]
+            query_terms = set(re.findall(r"[a-z0-9]+", query.lower()))
+            lexical_scores = self._bm25_candidates(query_terms, [doc.page_content for doc, _ in results])
+            docs_scores = [(doc, score, lexical) for (doc, score), lexical in zip(results, lexical_scores)]
             docs_scores.sort(key=lambda row: (row[2], row[1]), reverse=True)
             results = [(doc, similarity) for doc, similarity, _ in docs_scores[: options["top_k"]]]
             rerank_seconds = time.perf_counter() - start
@@ -138,18 +140,28 @@ class RetrievalService:
 
     @staticmethod
     def _bm25_score(query: str, text: str) -> float:
-        """Small-document BM25-like lexical score used only to order retrieved candidates."""
+        """BM25 lexical score over a bounded candidate set."""
         tokens = lambda s: re.findall(r"[a-z0-9]+", s.lower())
         qterms = set(tokens(query))
-        terms = tokens(text)
-        if not terms or not qterms:
-            return 0.0
-        counts = Counter(terms)
-        avg_length = max(len(terms), 1)
+        return RetrievalService._bm25_candidates(qterms, [text])[0]
+
+    @staticmethod
+    def _bm25_candidates(query_terms: set[str], texts: list[str]) -> list[float]:
+        """Score candidates with standard BM25 term frequency, IDF, and length normalization."""
+        tokenized = [re.findall(r"[a-z0-9]+", text.lower()) for text in texts]
+        average_length = sum(map(len, tokenized)) / max(len(tokenized), 1)
+        document_frequency = {term: sum(term in terms for terms in map(set, tokenized)) for term in query_terms}
+        count = len(tokenized)
         k1, b = 1.5, 0.75
-        score = 0.0
-        for term in qterms:
-            freq = counts[term]
-            if freq:
-                score += (freq * (k1 + 1)) / (freq + k1 * (1 - b + b * len(terms) / avg_length))
-        return score / math.sqrt(len(terms))
+        scores = []
+        for terms in tokenized:
+            counts = Counter(terms)
+            score = 0.0
+            for term in query_terms:
+                frequency = counts[term]
+                if frequency:
+                    idf = math.log(1 + (count - document_frequency[term] + 0.5) / (document_frequency[term] + 0.5))
+                    denominator = frequency + k1 * (1 - b + b * len(terms) / max(average_length, 1))
+                    score += idf * frequency * (k1 + 1) / denominator
+            scores.append(score)
+        return scores
